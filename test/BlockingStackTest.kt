@@ -12,22 +12,22 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 @LogLevel(DEBUG)
-@StressCTest(actorsBefore = 0, threads = 3, actorsPerThread = 3, invocationsPerIteration = 20_000,
-             sequentialSpecification = SynchronousQueueSequential::class)
+@StressCTest(actorsBefore = 0, threads = 3, actorsPerThread = 2, invocationsPerIteration = 20_000,
+             sequentialSpecification = BlockingStackSequential::class)
 class BlockingStackTest : BlockingStack<Int> {
-    val q = BlockingStackImpl<Int>()
+    private val q = BlockingStackImpl<Int>()
 
-    @Operation
+    @Operation(cancellableOnSuspension = false)
     override fun push(element: Int) { q.push(element) }
 
-    @Operation
+    @Operation(cancellableOnSuspension = false)
     override suspend fun pop(): Int = q.pop()
 
     @Test
     fun runTest() = LinChecker.check(this::class.java)
 }
 
-class SynchronousQueueSequential : BlockingStack<Int>, VerifierState() {
+class BlockingStackSequential : BlockingStack<Int>, VerifierState() {
     private val elements = Stack<Int>()
     private val waitingReceivers = ArrayList<Continuation<Int>>()
 

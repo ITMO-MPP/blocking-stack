@@ -11,12 +11,13 @@ repositories {
     jcenter()
     maven("https://kotlin.bintray.com/kotlinx")
     maven("https://dl.bintray.com/devexperts/Maven")
+    mavenLocal()
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))
-    testImplementation("org.jetbrains.kotlinx:lincheck:2.5.1")
+    testImplementation("org.jetbrains.kotlinx:lincheck:2.5.2")
 }
 
 sourceSets {
