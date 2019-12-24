@@ -17,7 +17,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
     testImplementation(kotlin("test-junit"))
-    testImplementation("org.jetbrains.kotlinx:lincheck:2.5.2")
+    testImplementation("org.jetbrains.kotlinx:lincheck:2.5.3")
 }
 
 sourceSets {
