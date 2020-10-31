@@ -1,19 +1,13 @@
-import org.jetbrains.kotlinx.lincheck.LinChecker
-import org.jetbrains.kotlinx.lincheck.LoggingLevel.DEBUG
-import org.jetbrains.kotlinx.lincheck.annotations.LogLevel
+import org.jetbrains.kotlinx.lincheck.*
+import org.jetbrains.kotlinx.lincheck.LoggingLevel.*
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
-import org.jetbrains.kotlinx.lincheck.strategy.stress.StressCTest
-import org.jetbrains.kotlinx.lincheck.verifier.VerifierState
-import org.junit.Test
+import org.jetbrains.kotlinx.lincheck.strategy.stress.*
+import org.jetbrains.kotlinx.lincheck.verifier.*
+import org.junit.*
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.*
 
-@LogLevel(DEBUG)
-@StressCTest(actorsBefore = 0, threads = 3, actorsPerThread = 2, invocationsPerIteration = 20_000,
-             sequentialSpecification = BlockingStackSequential::class)
 class BlockingStackTest : BlockingStack<Int> {
     private val q = BlockingStackImpl<Int>()
 
@@ -24,10 +18,19 @@ class BlockingStackTest : BlockingStack<Int> {
     override suspend fun pop(): Int = q.pop()
 
     @Test
-    fun runTest() = LinChecker.check(this::class.java)
+    fun runTest() = StressOptions()
+        .iterations(100)
+        .invocationsPerIteration(50_000)
+        .actorsBefore(0)
+        .actorsAfter(0)
+        .threads(3)
+        .actorsPerThread(3)
+        .sequentialSpecification(BlockingStackIntSequential::class.java)
+        .logLevel(INFO)
+        .check(this::class.java)
 }
 
-class BlockingStackSequential : BlockingStack<Int>, VerifierState() {
+class BlockingStackIntSequential : BlockingStack<Int>, VerifierState() {
     private val elements = Stack<Int>()
     private val waitingReceivers = ArrayList<Continuation<Int>>()
 

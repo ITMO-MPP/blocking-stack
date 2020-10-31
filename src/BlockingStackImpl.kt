@@ -1,4 +1,4 @@
-import java.util.concurrent.atomic.*
+import kotlinx.atomicfu.*
 
 class BlockingStackImpl<E> : BlockingStack<E> {
 
@@ -6,8 +6,8 @@ class BlockingStackImpl<E> : BlockingStack<E> {
     // Segment Queue Synchronizer
     // ==========================
 
-    private val enqIdx = AtomicLong()
-    private val deqIdx = AtomicLong()
+    private val enqIdx = atomic(0L)
+    private val deqIdx = atomic(0L)
 
     private suspend fun suspend(): E {
         TODO("implement me")
@@ -22,8 +22,8 @@ class BlockingStackImpl<E> : BlockingStack<E> {
     // ==============
 
 
-    private val head = AtomicReference<Node<E>?>()
-    private val elements = AtomicInteger()
+    private val head = atomic<Node<E>?>(null)
+    private val elements = atomic(0)
 
     override fun push(element: E) {
         val elements = this.elements.getAndIncrement()
@@ -49,4 +49,4 @@ class BlockingStackImpl<E> : BlockingStack<E> {
 
 private class Node<E>(val element: Any?, val next: Node<E>?)
 
-private val SUSPENDED = Any()
+private val SUSPENDED = Any() //
