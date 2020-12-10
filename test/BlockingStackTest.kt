@@ -1,6 +1,6 @@
 import org.jetbrains.kotlinx.lincheck.*
-import org.jetbrains.kotlinx.lincheck.LoggingLevel.*
 import org.jetbrains.kotlinx.lincheck.annotations.Operation
+import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.*
 import org.jetbrains.kotlinx.lincheck.strategy.stress.*
 import org.jetbrains.kotlinx.lincheck.verifier.*
 import org.junit.*
@@ -9,16 +9,16 @@ import kotlin.collections.ArrayList
 import kotlin.coroutines.*
 
 class BlockingStackTest : BlockingStack<Int> {
-    private val q = BlockingStackImpl<Int>()
+    private val s = BlockingStackImpl<Int>()
 
     @Operation(cancellableOnSuspension = false)
-    override fun push(element: Int) { q.push(element) }
+    override fun push(element: Int) { s.push(element) }
 
     @Operation(cancellableOnSuspension = false)
-    override suspend fun pop(): Int = q.pop()
+    override suspend fun pop(): Int = s.pop()
 
     @Test
-    fun runTest() = StressOptions()
+    fun stressTest() = StressOptions()
         .iterations(100)
         .invocationsPerIteration(50_000)
         .actorsBefore(0)
@@ -26,7 +26,17 @@ class BlockingStackTest : BlockingStack<Int> {
         .threads(3)
         .actorsPerThread(3)
         .sequentialSpecification(BlockingStackIntSequential::class.java)
-        .logLevel(INFO)
+        .check(this::class.java)
+
+    @Test
+    fun modelCheckingTest() = ModelCheckingOptions()
+        .iterations(100)
+        .invocationsPerIteration(50_000)
+        .actorsBefore(0)
+        .actorsAfter(0)
+        .threads(3)
+        .actorsPerThread(3)
+        .sequentialSpecification(BlockingStackIntSequential::class.java)
         .check(this::class.java)
 }
 

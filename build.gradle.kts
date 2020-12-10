@@ -33,7 +33,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
     implementation(kotlin("reflect"))
     testImplementation(kotlin("test-junit"))
-    testImplementation("org.jetbrains.kotlinx:lincheck:2.8")
+    testImplementation("org.jetbrains.kotlinx:lincheck:2.11")
 }
 
 sourceSets["main"].java.setSrcDirs(listOf("src"))
