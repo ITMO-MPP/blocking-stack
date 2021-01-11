@@ -11,10 +11,10 @@ import kotlin.coroutines.*
 class BlockingStackTest : BlockingStack<Int> {
     private val s = BlockingStackImpl<Int>()
 
-    @Operation(cancellableOnSuspension = false)
+    @Operation
     override fun push(element: Int) { s.push(element) }
 
-    @Operation(cancellableOnSuspension = false)
+    @Operation(cancellableOnSuspension = false, allowExtraSuspension = true)
     override suspend fun pop(): Int = s.pop()
 
     @Test
